@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Point {
+  id         Int      @id @default(autoincrement())
+  image      String
+  name       String
+  email      String   @unique
+  whatsapp   String
+  latitude   Decimal
+  longitude  Decimal
+  city       String
+  uf         String   @db.VarChar(2)
+  created_at DateTime @default(now())
+
+  PointItem PointItem[]
+
+  @@map("points")
+}
+
+model Item {
+  id    Int    @id @default(autoincrement())
+  image String
+  title String
+
+  PointItem PointItem[]
+
+  @@map("items")
+}
+
+model PointItem {
+  id      Int   @id @default(autoincrement())
+  point   Point @relation(fields: [pointId], references: [id])
+  pointId Int
+  item    Item  @relation(fields: [itemId], references: [id])
+  itemId  Int
+
+  @@map("pointItems")
+}
